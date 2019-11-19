@@ -35,4 +35,13 @@ namespace :import do
     end
   end
 
+  task transactions: :environment do
+    CSV.foreach('db/data/transactions.csv', headers: true) do |row|
+      row.delete('credit_card_expiration_date')
+      row['result'] = 0 if row['result'] == 'success'
+      row['result'] = 1 if row['result'] == 'failed'
+      Transaction.create!(row.to_h)
+    end
+  end
+
 end
