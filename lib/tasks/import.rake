@@ -21,4 +21,11 @@ namespace :import do
     end
   end
 
+  task invoices: :environment do
+    CSV.foreach('db/data/invoices.csv', headers: true) do |row|
+      row['status'] = 0 if row['status'] == 'shipped'
+      Invoice.create!(row.to_h)
+    end
+  end
+
 end
