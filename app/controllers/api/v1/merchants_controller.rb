@@ -7,9 +7,13 @@ class Api::V1::MerchantsController < ApplicationController
   end
 
   def show
-    merchant = Merchant.find(params[:id])
-    serialized_merchant = MerchantSerializer.new(merchant)
-    render json: serialized_merchant
+    merchant = Merchant.find_by(id: params[:id])
+    if merchant
+      serialized_merchant = MerchantSerializer.new(merchant)
+      render json: serialized_merchant
+    else
+      render_show_error('Merchant')
+    end
   end
 
 end
