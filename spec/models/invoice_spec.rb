@@ -10,16 +10,17 @@ RSpec.describe Invoice, type: :model do
     it { should belong_to :customer }
     it { should belong_to :merchant }
     it { should have_many :invoice_items }
+    it { should have_many :transactions }
   end
 
   describe 'status' do
     it 'can be created as a shipped invoice' do
       customer = Customer.create!(first_name: 'Chad', last_name: 'Belfort')
       merchant = Merchant.create!(name: 'Once and Floral')
-      order_1 = customer.invoices.create!(merchant_id: merchant.id, status: 0)
+      invoice = customer.invoices.create!(merchant_id: merchant.id, status: 0)
 
-      expect(order_1.status).to eq('shipped')
-      expect(order_1.shipped?).to eq(true)
+      expect(invoice.status).to eq('shipped')
+      expect(invoice.shipped?).to eq(true)
     end
   end
 
