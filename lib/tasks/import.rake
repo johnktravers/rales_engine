@@ -28,4 +28,11 @@ namespace :import do
     end
   end
 
+  task invoice_items: :environment do
+    CSV.foreach('db/data/invoice_items.csv', headers: true) do |row|
+      row['unit_price'] = row['unit_price'].to_f / 100
+      InvoiceItem.create!(row.to_h)
+    end
+  end
+
 end
