@@ -1,19 +1,28 @@
 class ApplicationController < ActionController::API
 
   def render_show_error(resource)
-    render json: {
-      errors: [{
-        code: error_code(resource),
-        title: "#{resource} with given ID does not exist."
-      }]
-    }
+    message = "#{resource} with given ID does not exist."
+    render_error(resource, message)
   end
 
   def render_find_error(resource)
+    message = "#{resource} with given attributes does not exist."
+    render_error(resource, message)
+  end
+
+  def render_find_all_error(resource)
+    message = "#{resource}s with given attributes do not exist."
+    render_error(resource, message)
+  end
+
+
+  private
+
+  def render_error(resource, message)
     render json: {
       errors: [{
         code: error_code(resource),
-        title: "#{resource} with given attributes does not exist."
+        title: message
       }]
     }
   end
