@@ -15,6 +15,11 @@ class ApplicationController < ActionController::API
     render_error(resource, message)
   end
 
+  def render_relationship_error(resource, dependents)
+    message = "#{resource} with given ID has no #{dependents}."
+    render_error(resource, message)
+  end
+
 
   private
 
