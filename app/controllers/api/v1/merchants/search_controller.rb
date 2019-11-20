@@ -11,6 +11,17 @@ class Api::V1::Merchants::SearchController < ApplicationController
     end
   end
 
+  def index
+    merchants = Merchant.where(filter_params)
+
+    if merchants.any?
+      serialized_merchants = MerchantSerializer.new(merchants)
+      render json: serialized_merchants
+    else
+      render_find_all_error('Merchant')
+    end
+  end
+
 
   private
 
