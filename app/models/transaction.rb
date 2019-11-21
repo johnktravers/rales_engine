@@ -8,4 +8,6 @@ class Transaction < ApplicationRecord
   enum result: %w(success failed)
 
   belongs_to :invoice
+
+  scope :successful, -> { where(result: 0) }
 end
