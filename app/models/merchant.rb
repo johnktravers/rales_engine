@@ -9,4 +9,12 @@ class Merchant < ApplicationRecord
   def self.random_merchant
     find(pluck(:id).sample)
   end
+
+  def self.top_merchants_by_revenue(limit)
+    joins(:invoice_items, :transactions)
+      .select('merchants.*, sum(invoice_items.quantity * invoice_items.unit_price) as total_revenue')
+      .group(:id)
+      .order('total_revenue DESC')
+      .limit(limit)
+  end
 end
