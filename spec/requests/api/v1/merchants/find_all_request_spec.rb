@@ -4,14 +4,12 @@ RSpec.describe 'Merchants API - find all endpoint' do
 
   before :each do
     create_list(:merchant, 4)
-    2.times do
-      create(:merchant,
-        name: 'Once and Floral',
-        created_at: '2012-03-27 14:53:59 UTC',
-        updated_at: '2012-03-27 18:53:59 UTC'
-      )
+    create_list(:merchant, 2,
+      name: 'Once and Floral',
+      created_at: '2012-03-27 14:53:59 UTC',
+      updated_at: '2012-03-27 18:53:59 UTC'
+    )
     @merchant = Merchant.last
-    end
   end
 
   it 'can find merchants by id' do
