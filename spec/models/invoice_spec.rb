@@ -33,6 +33,13 @@ RSpec.describe Invoice, type: :model do
 
       expect(Invoice.total_revenue_on_date('2012-03-24')).to eq(47.0)
     end
+
+    it 'random invoice' do
+      invoices = create_list(:invoice, 3)
+
+      expect(Invoice.random_invoice)
+        .to eq(invoices[0]).or eq(invoices[1]).or eq(invoices[2])
+    end
   end
 
 end
