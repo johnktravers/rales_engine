@@ -15,7 +15,7 @@ class Api::V1::Invoices::SearchController < ApplicationController
     invoices = Invoice.where(filter_params)
 
     if invoices.any?
-      serialized_invoices = InvoiceSerializer.new(invoices)
+      serialized_invoices = InvoiceSerializer.new(invoices.order(:id))
       render json: serialized_invoices
     else
       render_find_all_error('Invoice')
