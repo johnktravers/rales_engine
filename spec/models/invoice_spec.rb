@@ -9,8 +9,9 @@ RSpec.describe Invoice, type: :model do
   describe 'relationships' do
     it { should belong_to :customer }
     it { should belong_to :merchant }
-    it { should have_many :invoice_items }
     it { should have_many :transactions }
+    it { should have_many :invoice_items }
+    it { should have_many(:items).through(:invoice_items) }
   end
 
   describe 'status' do
@@ -32,6 +33,13 @@ RSpec.describe Invoice, type: :model do
       end
 
       expect(Invoice.total_revenue_on_date('2012-03-24')).to eq(47.0)
+    end
+
+    it 'random invoice' do
+      invoices = create_list(:invoice, 3)
+
+      expect(Invoice.random_invoice)
+        .to eq(invoices[0]).or eq(invoices[1]).or eq(invoices[2])
     end
   end
 

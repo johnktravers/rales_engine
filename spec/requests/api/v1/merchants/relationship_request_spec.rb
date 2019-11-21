@@ -1,84 +1,48 @@
 require 'rails_helper'
 
-RSpec.describe 'Merchant API - relationship endpoints' do
+RSpec.describe 'Merchants API - relationship endpoints' do
 
-  describe 'has many items' do
-    before :each do
-      @merchant = create(:merchant)
-    end
+  before :each do
+    @merchant = create(:merchant)
+    @has_many = ['items', 'invoices']
+  end
 
-    it 'shows all items belonging to a merchant' do
-      items = create_list(:item, 4, merchant: @merchant)
-      other_merchant = create(:merchant)
-      create_list(:item, 2, merchant: other_merchant)
+  it 'shows all resources belonging to a merchant' do
+    items = create_list(:item, 4, merchant: @merchant)
+    invoices = create_list(:invoice, 4, merchant: @merchant)
+    create_list(:item, 2)
+    create_list(:invoice, 2)
 
-      get "/api/v1/merchants/#{@merchant.id}/items"
+    resources = [items, invoices]
 
-      expect(response).to be_successful
-
-      json_items = JSON.parse(response.body)
-
-      expect(json_items['data'].length).to eq(4)
-      expect(json_items['data'][3]['id'].to_i).to eq(items.last.id)
-    end
-
-    it 'shows an error if the merchant has no items' do
-      get "/api/v1/merchants/#{@merchant.id}/items"
+    @has_many.each_with_index do |resource, i|
+      get "/api/v1/merchants/#{@merchant.id}/#{resource}"
 
       expect(response).to be_successful
 
-      error = JSON.parse(response.body)
+      json_resources = JSON.parse(response.body)
 
-      expect(error['errors'][0]['title'])
-        .to eq('Merchant with given ID has no items.')
-    end
-
-    it 'shows an error if the merchant does not exist' do
-      get '/api/v1/merchants/2316413/items'
-
-      expect(response).to be_successful
-
-      error = JSON.parse(response.body)
-
-      expect(error['errors'][0]['title'])
-        .to eq('Merchant with given ID does not exist.')
+      expect(json_resources['data'].length).to eq(4)
+      expect(json_resources['data'][3]['id'].to_i).to eq(resources[i].last.id)
     end
   end
 
-  describe 'has many invoices' do
-    before :each do
-      @merchant = create(:merchant)
-    end
-
-    it 'shows all invoices belonging to a merchant' do
-      customer = create(:customer)
-      invoices = create_list(:invoice, 4, merchant: @merchant, customer: customer)
-      other_merchant = create(:merchant)
-      create_list(:invoice, 2, merchant: other_merchant, customer: customer)
-
-      get "/api/v1/merchants/#{@merchant.id}/invoices"
-
-      expect(response).to be_successful
-
-      json_invoices = JSON.parse(response.body)
-
-      expect(json_invoices['data'].length).to eq(4)
-      expect(json_invoices['data'][3]['id'].to_i).to eq(invoices.last.id)
-    end
-
-    it 'shows an error if the merchant has no invoices' do
-      get "/api/v1/merchants/#{@merchant.id}/invoices"
+  it 'shows an error if the merchant does not have that resource' do
+    @has_many.each do |resource|
+      get "/api/v1/merchants/#{@merchant.id}/#{resource}"
 
       expect(response).to be_successful
 
       error = JSON.parse(response.body)
 
       expect(error['errors'][0]['title'])
-        .to eq('Merchant with given ID has no invoices.')
+        .to eq("Merchant with given ID has no #{resource}.")
     end
+  end
 
-    it 'shows an error if the merchant does not exist' do
-      get '/api/v1/merchants/2316413/invoices'
+  it 'shows an error if the merchant does not exist' do
+    @has_many.each do |resource|
+      get "/api/v1/merchants/2316413/#{resource}"
 
       expect(response).to be_successful
 

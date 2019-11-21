@@ -4,8 +4,13 @@ class Invoice < ApplicationRecord
 
   belongs_to :customer
   belongs_to :merchant
-  has_many :invoice_items
   has_many :transactions
+  has_many :invoice_items
+  has_many :items, through: :invoice_items
+
+  def self.random_invoice
+    find(pluck(:id).sample)
+  end
 
   def self.total_revenue_on_date(date)
     joins(:invoice_items, :transactions)
