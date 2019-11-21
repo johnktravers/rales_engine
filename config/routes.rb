@@ -3,11 +3,14 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :merchants do
-        get '/find',         to: 'search#show'
-        get '/find_all',     to: 'search#index'
-        get '/random',       to: 'random#show'
-        get '/:id/items',    to: 'items#index'
-        get '/:id/invoices', to: 'invoices#index'
+        get '/find',                  to: 'search#show'
+        get '/find_all',              to: 'search#index'
+        get '/random',                to: 'random#show'
+        get '/:id/items',             to: 'items#index'
+        get '/:id/invoices',          to: 'invoices#index'
+        get '/most_revenue',          to: 'revenue#index'
+        get '/revenue',               to: 'revenue#show'
+        get '/:id/favorite_customer', to: 'customers#show'
       end
       resources :merchants, only: [:index, :show]
     end

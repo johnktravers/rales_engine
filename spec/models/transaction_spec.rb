@@ -15,27 +15,15 @@ RSpec.describe Transaction, type: :model do
   end
 
   describe 'result' do
-    before :each do
-      @customer = Customer.create!(first_name: 'Chad', last_name: 'Belfort')
-      @merchant = Merchant.create!(name: 'Once and Floral')
-      @invoice = @customer.invoices.create!(merchant_id: @merchant.id, status: 0)
-    end
-
     it 'can be created as a successful transaction' do
-      transaction = @invoice.transactions.create!(
-        credit_card_number: '4654405418249632',
-        result: 0
-      )
+      transaction = create(:transaction)
 
       expect(transaction.result).to eq('success')
       expect(transaction.success?).to eq(true)
     end
 
     it 'can be created as a successful transaction' do
-      transaction = @invoice.transactions.create!(
-        credit_card_number: '4654405418249632',
-        result: 1
-      )
+      transaction = create(:transaction, result: 1)
 
       expect(transaction.result).to eq('failed')
       expect(transaction.failed?).to eq(true)
