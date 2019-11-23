@@ -13,6 +13,12 @@ RSpec.describe Item, type: :model do
     it { should belong_to :merchant }
     it { should have_many :invoice_items }
     it { should have_many(:invoices).through(:invoice_items) }
+  describe 'class methods' do
+    it 'random item' do
+      items = create_list(:item, 3)
+
+      expect(Item.random_item).to eq(items[0]).or eq(items[1]).or eq(items[2])
+    end
   end
 
 end
