@@ -15,7 +15,7 @@ class Api::V1::InvoiceItems::SearchController < ApplicationController
     invoice_items = InvoiceItem.where(filter_params)
 
     if invoice_items.any?
-      serialized_invoice_items = InvoiceItemSerializer.new(invoice_items)
+      serialized_invoice_items = InvoiceItemSerializer.new(invoice_items.order(:id))
       render json: serialized_invoice_items
     else
       render_find_all_error('Invoice item')
