@@ -15,4 +15,15 @@ RSpec.describe InvoiceItem, type: :model do
     it { should belong_to :invoice }
   end
 
+  describe 'class methods' do
+    it 'random invoice item' do
+      invoice_items = create_list(:invoice_item, 3)
+
+      expect(InvoiceItem.random_invoice_item)
+        .to eq(invoice_items[0])
+        .or eq(invoice_items[1])
+        .or eq(invoice_items[2])
+    end
+  end
+
 end
