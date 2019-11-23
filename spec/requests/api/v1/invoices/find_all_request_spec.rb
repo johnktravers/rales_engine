@@ -38,48 +38,24 @@ RSpec.describe 'Invoices API - find all endpoint' do
     expect(invoices['data'][5]['id'].to_i).to eq(@invoice.id)
   end
 
-  it 'can find invoices by merchant id' do
-    get "/api/v1/invoices/find_all?merchant_id=#{@merchant.id}"
+  it 'can find invoices by foreign key or timestamp' do
+    attributes = {
+      'merchant_id' => @merchant.id,
+      'customer_id' => @customer.id,
+      'created_at'  => @invoice.created_at,
+      'updated_at'  => @invoice.updated_at,
+    }
 
-    expect(response).to be_successful
+    attributes.each do |attribute, value|
+      get "/api/v1/invoices/find_all?#{attribute}=#{value}"
 
-    invoices = JSON.parse(response.body)
+      expect(response).to be_successful
 
-    expect(invoices['data'].length).to eq(2)
-    expect(invoices['data'][1]['id'].to_i).to eq(@invoice.id)
-  end
+      invoices = JSON.parse(response.body)
 
-  it 'can find invoices by customer id' do
-    get "/api/v1/invoices/find_all?customer_id=#{@customer.id}"
-
-    expect(response).to be_successful
-
-    invoices = JSON.parse(response.body)
-
-    expect(invoices['data'].length).to eq(2)
-    expect(invoices['data'][1]['id'].to_i).to eq(@invoice.id)
-  end
-
-  it 'can find invoices by created at timestamp' do
-    get "/api/v1/invoices/find_all?created_at=#{@invoice.created_at}"
-
-    expect(response).to be_successful
-
-    invoices = JSON.parse(response.body)
-
-    expect(invoices['data'].length).to eq(2)
-    expect(invoices['data'][1]['id'].to_i).to eq(@invoice.id)
-  end
-
-  it 'can find invoices by updated at timestamp' do
-    get "/api/v1/invoices/find_all?updated_at=#{@invoice.updated_at}"
-
-    expect(response).to be_successful
-
-    invoices = JSON.parse(response.body)
-
-    expect(invoices['data'].length).to eq(2)
-    expect(invoices['data'][1]['id'].to_i).to eq(@invoice.id)
+      expect(invoices['data'].length).to eq(2)
+      expect(invoices['data'][1]['id'].to_i).to eq(@invoice.id)
+    end
   end
 
   it 'shows an error if no invoice is found' do
