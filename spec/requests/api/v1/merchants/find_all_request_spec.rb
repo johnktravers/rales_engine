@@ -23,37 +23,23 @@ RSpec.describe 'Merchants API - find all endpoint' do
     expect(merchants['data'][0]['id'].to_i).to eq(@merchant.id)
   end
 
-  it 'can find merchants by name' do
-    get "/api/v1/merchants/find_all?name=#{@merchant.name}"
+  it 'can find merchants by name or timestamp' do
+    attributes = {
+      'name' => @merchant.name,
+      'created_at' => @merchant.created_at,
+      'updated_at' => @merchant.updated_at
+    }
 
-    expect(response).to be_successful
+    attributes.each do |attribute, value|
+      get "/api/v1/merchants/find_all?#{attribute}=#{value}"
 
-    merchants = JSON.parse(response.body)
+      expect(response).to be_successful
 
-    expect(merchants['data'].length).to eq(2)
-    expect(merchants['data'][1]['id'].to_i).to eq(@merchant.id)
-  end
+      merchants = JSON.parse(response.body)
 
-  it 'can find merchants by created at timestamp' do
-    get "/api/v1/merchants/find_all?created_at=#{@merchant.created_at}"
-
-    expect(response).to be_successful
-
-    merchants = JSON.parse(response.body)
-
-    expect(merchants['data'].length).to eq(2)
-    expect(merchants['data'][1]['id'].to_i).to eq(@merchant.id)
-  end
-
-  it 'can find merchants by updated at timestamp' do
-    get "/api/v1/merchants/find_all?updated_at=#{@merchant.updated_at}"
-
-    expect(response).to be_successful
-
-    merchants = JSON.parse(response.body)
-
-    expect(merchants['data'].length).to eq(2)
-    expect(merchants['data'][1]['id'].to_i).to eq(@merchant.id)
+      expect(merchants['data'].length).to eq(2)
+      expect(merchants['data'][1]['id'].to_i).to eq(@merchant.id)
+    end
   end
 
   it 'cannot find merchants that do not exist' do
