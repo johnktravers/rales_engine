@@ -8,7 +8,7 @@ class Api::V1::Items::DatesController < ApplicationController
       render json: { data: {
         id: date[0].gsub(/-/, ''),
         type: 'date',
-        attributes: { best_day: date[0], transaction_count: date[1].to_s }
+        attributes: { best_day: date[0], quantity_sold: date[1].to_s }
       } }
     else
       render_show_error('Item')
