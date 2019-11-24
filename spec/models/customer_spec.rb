@@ -13,4 +13,13 @@ RSpec.describe Customer, type: :model do
     it { should have_many(:invoice_items).through(:invoices) }
   end
 
+  describe 'class methods' do
+    it 'random customer' do
+      customers = create_list(:customer, 3)
+
+      expect(Customer.random_customer)
+        .to eq(customers[0]).or eq(customers[1]).or eq(customers[2])
+    end
+  end
+
 end
