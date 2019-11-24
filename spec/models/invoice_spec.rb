@@ -35,6 +35,20 @@ RSpec.describe Invoice, type: :model do
       expect(Invoice.total_revenue_on_date('2012-03-24')).to eq(47.0)
     end
 
+    it 'best day' do
+      item = create(:item)
+      [0, 1, 2].each do |i|
+        create_list(:invoice, 5, created_at: "2012-03-#{i}4 15:54:10 UTC")
+      end
+
+      Invoice.all.each_with_index do |invoice, i|
+        create(:invoice_item, invoice: invoice, unit_price: (i + 1) * 10 % 43, item: item)
+        create(:transaction, invoice: invoice, result: (i.even? ? 0 : 1))
+      end
+
+      expect(Invoice.best_day(item.id)).to eq(['2012-03-24', 3])
+    end
+
     it 'random invoice' do
       invoices = create_list(:invoice, 3)
 
