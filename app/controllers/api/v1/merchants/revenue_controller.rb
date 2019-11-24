@@ -2,7 +2,7 @@ class Api::V1::Merchants::RevenueController < ApplicationController
 
   def index
     if params[:quantity] && params[:quantity].to_i > 0
-      merchants = Merchant.top_merchants_by_revenue(params[:quantity])
+      merchants = Merchant.top_merchants_by_revenue(params[:quantity].to_i)
       serialized_merchants = MerchantSerializer.new(merchants)
       render json: serialized_merchants
     else
