@@ -9,4 +9,14 @@ class Customer < ApplicationRecord
   def self.random_customer
     find(pluck(:id).sample)
   end
+
+  def favorite_merchant
+    merchants
+      .joins(:transactions)
+      .select('merchants.*, count(transactions.id)')
+      .merge(Transaction.successful)
+      .group('merchants.id')
+      .order('count DESC')
+      .first
+  end
 end
