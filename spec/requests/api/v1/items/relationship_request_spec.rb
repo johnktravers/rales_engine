@@ -43,14 +43,17 @@ RSpec.describe 'Items API - relationship endpoints' do
 
   it 'shows an error if the item does not exist' do
     Item.destroy_all
-    get '/api/v1/items/1/invoice_items'
 
-    expect(response).to be_successful
+    ['invoice_items', 'merchant'].each do |resource|
+      get "/api/v1/items/1/#{resource}"
 
-    error = JSON.parse(response.body)
+      expect(response).to be_successful
 
-    expect(error['errors'][0]['title'])
-      .to eq('Item with given ID does not exist.')
+      error = JSON.parse(response.body)
+
+      expect(error['errors'][0]['title'])
+        .to eq('Item with given ID does not exist.')
+    end
   end
 
 end
