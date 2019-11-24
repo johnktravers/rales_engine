@@ -23,4 +23,21 @@ RSpec.describe Customer, type: :model do
     end
   end
 
+  describe 'instance methods' do
+    it 'favorite merchant' do
+      customer = create(:customer)
+      merchants = create_list(:merchant, 3)
+
+      merchants.each do |merchant|
+        create_list(:invoice, 5, customer: customer, merchant: merchant)
+      end
+
+      Invoice.all.each_with_index do |invoice, i|
+        create(:transaction, invoice: invoice, result: (i.odd? ? 0 : 1))
+      end
+
+      expect(customer.favorite_merchant).to eq(merchants[1])
+    end
+  end
+
 end
