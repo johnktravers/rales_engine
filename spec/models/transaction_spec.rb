@@ -30,4 +30,15 @@ RSpec.describe Transaction, type: :model do
     end
   end
 
+  describe 'class methods' do
+    it 'random transaction' do
+      transactions = create_list(:transaction, 3)
+
+      expect(Transaction.random_transaction)
+        .to eq(transactions[0])
+        .or eq(transactions[1])
+        .or eq(transactions[2])
+    end
+  end
+
 end
