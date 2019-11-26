@@ -49,6 +49,30 @@ RSpec.describe 'Merchants API - business intelligence endpoints' do
     end
   end
 
+  describe 'customers with pending invoices' do
+    it 'shows customers with pending invoices for a given merchant' do
+      merchant = create(:merchant)
+      customers = create_list(:customer, 3)
+
+      customers.each_with_index do |customer, i|
+        create(:invoice, merchant: merchant, customer: customers[i])
+      end
+
+      create(:transaction, result: 0, invoice: Invoice.first)
+      create(:transaction, result: 1, invoice: Invoice.second)
+
+      get "/api/v1/merchants/#{merchant.id}/customers_with_pending_invoices"
+
+      expect(response).to be_successful
+
+      json_customers = JSON.parse(response.body)
+
+      expect(json_customers['data'].length).to eq(2)
+      expect(json_customers['data'][0]['id'].to_i).to eq(customers[1].id)
+      expect(json_customers['data'][1]['id'].to_i).to eq(customers[2].id)
+    end
+  end
+
   describe 'endpoint error handling' do
     it 'shows an error if quantity is not a valid integer' do
       get '/api/v1/merchants/most_revenue?quantity=-4'
@@ -73,14 +97,18 @@ RSpec.describe 'Merchants API - business intelligence endpoints' do
     end
 
     it 'shows the favorite customer for a given merchant' do
-      get "/api/v1/merchants/524727/favorite_customer"
+      paths = ['favorite_customer', 'customers_with_pending_invoices']
 
-      expect(response).to be_successful
+      paths.each do |path|
+        get "/api/v1/merchants/1/#{path}"
 
-      customer = JSON.parse(response.body)
+        expect(response).to be_successful
 
-      expect(customer['errors'][0]['title'])
-        .to eq('Merchant with given ID does not exist.')
+        customer = JSON.parse(response.body)
+
+        expect(customer['errors'][0]['title'])
+          .to eq('Merchant with given ID does not exist.')
+      end
     end
   end
 
