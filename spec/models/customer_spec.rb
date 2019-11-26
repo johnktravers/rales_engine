@@ -21,6 +21,21 @@ RSpec.describe Customer, type: :model do
       expect(Customer.random_customer)
         .to eq(customers[0]).or eq(customers[1]).or eq(customers[2])
     end
+
+    it 'customers with pending invoices' do
+      merchant = create(:merchant)
+      customers = create_list(:customer, 3)
+
+      customers.each_with_index do |customer, i|
+        create(:invoice, merchant: merchant, customer: customers[i])
+      end
+
+      create(:transaction, result: 0, invoice: Invoice.first)
+      create(:transaction, result: 1, invoice: Invoice.second)
+
+      expect(Customer.customers_with_pending_invoices(merchant.id))
+        .to eq([customers[1], customers[2]])
+    end
   end
 
   describe 'instance methods' do
