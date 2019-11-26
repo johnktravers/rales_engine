@@ -6,7 +6,7 @@ RSpec.describe 'Items API - find all endpoint' do
     create_list(:item, 4)
     @merchant = create(:merchant)
 
-    @item = create_list(:item, 2,
+    create_list(:item, 2,
       name: 'Hefty Rain Coat',
       description: 'This will definitely protect you from the elements.',
       unit_price: 133.24,
