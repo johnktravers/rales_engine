@@ -11,16 +11,34 @@ class Api::V1::Merchants::RevenueController < ApplicationController
   end
 
   def show
-    if params[:date] && validate_date(params[:date])
+    merchant = Merchant.find_by(id: params[:id]) if params[:id]
+
+    if params[:id] && merchant && !params[:date]
+      revenue = merchant.total_revenue
+      id = params[:id]
+      key = :revenue
+    elsif params[:id] && merchant && params[:date] && validate_date(params[:date])
+      revenue = merchant.total_revenue_on_date(params[:date])
+      id = params[:id] + params[:date].gsub(/-/, '')
+      key = :revenue
+    elsif !params[:id] && params[:date] && validate_date(params[:date])
       revenue = Invoice.total_revenue_on_date(params[:date])
-      render json: { data: {
-        id: params[:date].gsub(/-/, ''),
-        type: 'revenue',
-        attributes: { total_revenue: '%.2f' % revenue }
-      } }
-    else
-      render_error('Incorrect date format. Please use format YYYY-MM-DD.')
+      id = params[:date].gsub(/-/, '')
+      key = :total_revenue
     end
+
+    if revenue
+      render json: { data: {
+        id: id,
+        type: 'revenue',
+        attributes: { key => '%.2f' % revenue }
+        } }
+    elsif params[:date] && !validate_date(params[:date])
+      render_error('Incorrect date format. Please use format YYYY-MM-DD.')
+    else
+      render_show_error('Merchant')
+    end
+
   end
 
 
