@@ -40,6 +40,7 @@ Rails.application.routes.draw do
         get '/:id/invoice_items', to: 'invoice_items#index'
         get '/:id/merchant',      to: 'merchants#show'
         get '/most_revenue',      to: 'revenue#index'
+        get '/most_items',        to: 'sales#index'
         get '/:id/best_day',      to: 'dates#show'
       end
 
