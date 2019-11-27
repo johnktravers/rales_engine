@@ -21,4 +21,13 @@ class Item < ApplicationRecord
       .order('revenue DESC')
       .limit(limit)
   end
+
+  def self.top_items_by_quantity_sold(limit)
+    joins(:transactions)
+      .select('items.*, sum(invoice_items.quantity) as quantity')
+      .merge(Transaction.successful)
+      .group(:id)
+      .order('quantity DESC')
+      .limit(limit)
+  end
 end
