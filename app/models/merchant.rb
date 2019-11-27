@@ -12,21 +12,56 @@ class Merchant < ApplicationRecord
   end
 
   def self.top_merchants_by_revenue(limit)
-    joins(:invoice_items, :transactions)
-      .select('merchants.*, sum(invoice_items.quantity * invoice_items.unit_price) as total_revenue')
-      .group(:id)
-      .order('total_revenue DESC')
-      .limit(limit)
+    find_by_sql(
+      'SELECT merchants.*
+        FROM merchants
+        INNER JOIN invoices ON invoices.merchant_id = merchants.id
+        INNER JOIN invoice_items ON invoice_items.invoice_id = invoices.id
+        INNER JOIN transactions ON transactions.invoice_id = invoices.id
+        WHERE transactions.result = 0
+        GROUP BY merchants.id
+        ORDER BY sum(invoice_items.quantity * invoice_items.unit_price) DESC
+        LIMIT ($1)', [[nil, limit]]
+    )
+  end
+
+  def self.top_merchants_by_items_sold(limit)
+    find_by_sql(
+      'SELECT merchants.*
+        FROM merchants
+        INNER JOIN invoices ON invoices.merchant_id = merchants.id
+        INNER JOIN invoice_items ON invoice_items.invoice_id = invoices.id
+        INNER JOIN transactions ON transactions.invoice_id = invoices.id
+        WHERE transactions.result = 0
+        GROUP BY merchants.id
+        ORDER BY sum(invoice_items.quantity) DESC
+        LIMIT ($1)', [[nil, limit]]
+    )
   end
 
   def favorite_customer
     customers
+    .joins(:transactions)
+    .select('customers.*, count(transactions.id)')
+    .merge(Transaction.successful)
+    .where(invoices: {merchant_id: id})
+    .group('customers.id')
+    .order('count DESC')
+    .first
+  end
+
+  def total_revenue
+    items
       .joins(:transactions)
-      .select('customers.*, count(transactions.id)')
       .merge(Transaction.successful)
-      .where(invoices: {merchant_id: id})
-      .group('customers.id')
-      .order('count DESC')
-      .first
+      .sum('invoice_items.quantity * invoice_items.unit_price')
+  end
+
+  def total_revenue_on_date(date)
+    items
+      .joins(:transactions)
+      .merge(Transaction.successful)
+      .where('invoices.created_at::date = ?', date)
+      .sum('invoice_items.quantity * invoice_items.unit_price')
   end
 end
