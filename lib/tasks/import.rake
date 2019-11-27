@@ -44,4 +44,13 @@ namespace :import do
     end
   end
 
+  task all: [
+    :merchants,
+    :items,
+    :customers,
+    :invoices,
+    :invoice_items,
+    :transactions
+  ]
+
 end
