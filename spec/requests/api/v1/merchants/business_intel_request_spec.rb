@@ -8,8 +8,8 @@ RSpec.describe 'Merchants API - business intelligence endpoints' do
       @customers = create_list(:customer, 4)
       @merchants.each_with_index do |merchant, i|
         create(:item, merchant: merchant)
-        create_list(:invoice, 2, merchant: merchant, customer: @customers[i], created_at: "2012-03-#{i}4 15:54:10 UTC")
-        create_list(:invoice, 3, merchant: merchant, customer: @customers[i + 1], created_at: "2012-03-#{i}4 15:54:10 UTC")
+        create_list(:invoice, 2, merchant: merchant, customer: @customers[i], created_at: "2012-03-#{i}1 15:54:10 UTC")
+        create_list(:invoice, 3, merchant: merchant, customer: @customers[i + 1], created_at: "2012-03-#{i + 1}1 15:54:10 UTC")
       end
 
       Invoice.all.each_with_index do |invoice, i|
@@ -25,7 +25,7 @@ RSpec.describe 'Merchants API - business intelligence endpoints' do
 
       merchants = JSON.parse(response.body)
 
-      expect(merchants['data'][0]['id'].to_i).to eq(@merchants[0].id)
+      expect(merchants['data'][0]['id'].to_i).to eq(@merchants[2].id)
       expect(merchants['data'][1]['id'].to_i).to eq(@merchants[1].id)
     end
 
@@ -41,13 +41,13 @@ RSpec.describe 'Merchants API - business intelligence endpoints' do
     end
 
     it 'shows the total revenue for a given date' do
-      get '/api/v1/merchants/revenue?date=2012-03-24'
+      get '/api/v1/merchants/revenue?date=2012-03-21'
 
       expect(response).to be_successful
 
       revenue = JSON.parse(response.body)
 
-      expect(revenue['data']['attributes']['total_revenue']).to eq('46.00')
+      expect(revenue['data']['attributes']['total_revenue']).to eq('272.00')
     end
 
     it 'shows the favorite customer for a given merchant' do
@@ -61,23 +61,23 @@ RSpec.describe 'Merchants API - business intelligence endpoints' do
     end
 
     it 'shows the total revenue for a given merchant' do
-      get "/api/v1/merchants/#{@merchants[0].id}/revenue"
+      get "/api/v1/merchants/#{@merchants[1].id}/revenue"
 
       expect(response).to be_successful
 
       revenue = JSON.parse(response.body)
 
-      expect(revenue['data']['attributes']['revenue']).to eq('47.00')
+      expect(revenue['data']['attributes']['revenue']).to eq('194.00')
     end
 
     it 'shows the total revenue for a given merchant on a given date' do
-      get "/api/v1/merchants/#{@merchants[0].id}/revenue?date=2012-03-14"
+      get "/api/v1/merchants/#{@merchants[1].id}/revenue?date=2012-03-11"
 
       expect(response).to be_successful
 
       revenue = JSON.parse(response.body)
 
-      expect(revenue['data']['attributes']['revenue']).to eq('25.00')
+      expect(revenue['data']['attributes']['revenue']).to eq('162.00')
     end
   end
 
@@ -133,7 +133,7 @@ RSpec.describe 'Merchants API - business intelligence endpoints' do
     end
 
     it 'shows the favorite customer for a given merchant' do
-      paths = ['favorite_customer', 'customers_with_pending_invoices']
+      paths = ['favorite_customer', 'customers_with_pending_invoices', 'revenue']
 
       paths.each do |path|
         get "/api/v1/merchants/1/#{path}"
