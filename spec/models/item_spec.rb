@@ -28,7 +28,7 @@ RSpec.describe Item, type: :model do
     end
 
     it 'random item' do
-      expect(Item.random_item)
+      expect(Item.random)
         .to eq(@items[0]).or eq(@items[1]).or eq(@items[2])
     end
 

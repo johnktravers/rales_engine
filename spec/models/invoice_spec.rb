@@ -52,7 +52,7 @@ RSpec.describe Invoice, type: :model do
     it 'random invoice' do
       invoices = create_list(:invoice, 3)
 
-      expect(Invoice.random_invoice)
+      expect(Invoice.random)
         .to eq(invoices[0]).or eq(invoices[1]).or eq(invoices[2])
     end
   end

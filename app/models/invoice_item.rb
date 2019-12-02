@@ -9,8 +9,4 @@ class InvoiceItem < ApplicationRecord
 
   belongs_to :item
   belongs_to :invoice
-
-  def self.random_invoice_item
-    find(pluck(:id).sample)
-  end
 end

@@ -7,10 +7,6 @@ class Merchant < ApplicationRecord
   has_many :transactions,  through: :invoices
   has_many :invoice_items, through: :invoices
 
-  def self.random_merchant
-    find(pluck(:id).sample)
-  end
-
   def self.top_merchants_by_revenue(limit)
     find_by_sql(
       'SELECT merchants.*
