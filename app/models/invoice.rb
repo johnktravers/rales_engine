@@ -10,7 +10,8 @@ class Invoice < ApplicationRecord
 
   def self.total_revenue_on_date(date)
     joins(:invoice_items, :transactions)
-      .where('invoices.created_at::date = ? AND transactions.result = 0', date)
+      .merge(Transaction.successful)
+      .where('invoices.created_at::date = ?', date)
       .sum('invoice_items.quantity * invoice_items.unit_price')
   end
 
