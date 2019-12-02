@@ -8,10 +8,6 @@ class Invoice < ApplicationRecord
   has_many :invoice_items
   has_many :items, through: :invoice_items
 
-  def self.random_invoice
-    find(pluck(:id).sample)
-  end
-
   def self.total_revenue_on_date(date)
     joins(:invoice_items, :transactions)
       .where('invoices.created_at::date = ? AND transactions.result = 0', date)

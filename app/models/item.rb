@@ -9,10 +9,6 @@ class Item < ApplicationRecord
   has_many :invoices,     through: :invoice_items
   has_many :transactions, through: :invoices
 
-  def self.random_item
-    find(pluck(:id).sample)
-  end
-
   def self.top_items_by_revenue(limit)
     joins(:transactions)
       .select('items.*, sum(invoice_items.quantity * invoice_items.unit_price) as revenue')
