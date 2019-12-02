@@ -33,7 +33,7 @@ RSpec.describe Merchant, type: :model do
     end
 
     it 'random merchant' do
-      expect(Merchant.random_merchant)
+      expect(Merchant.random)
         .to eq(@merchants[0]).or eq(@merchants[1]).or eq(@merchants[2])
     end
 

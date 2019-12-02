@@ -34,7 +34,7 @@ RSpec.describe Transaction, type: :model do
     it 'random transaction' do
       transactions = create_list(:transaction, 3)
 
-      expect(Transaction.random_transaction)
+      expect(Transaction.random)
         .to eq(transactions[0])
         .or eq(transactions[1])
         .or eq(transactions[2])

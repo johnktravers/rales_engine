@@ -18,7 +18,7 @@ RSpec.describe Customer, type: :model do
     it 'random customer' do
       customers = create_list(:customer, 3)
 
-      expect(Customer.random_customer)
+      expect(Customer.random)
         .to eq(customers[0]).or eq(customers[1]).or eq(customers[2])
     end
 
