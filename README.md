@@ -9,6 +9,7 @@ To run this API on your device, navigate to your desired directory and execute t
 ```
 git clone git@github.com:johnktravers/rales_engine.git
 cd rales_engine
+bundle install
 rake db:{create,migrate}
 rake import:all
 rails server
